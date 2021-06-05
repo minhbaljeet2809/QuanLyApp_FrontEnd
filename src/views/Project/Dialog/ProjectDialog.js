@@ -7,7 +7,6 @@ import {
     DialogTitle,
 } from '@material-ui/core';
 import { TextFieldCustom } from '../Component/TextFliedCustom';
-import axios from 'axios';
 import _ from 'lodash';
 import { SelectCustom } from '../Component/SelectFlied';
 import { getStudent } from 'service/Api';
@@ -44,6 +43,33 @@ export function ProjectDialog(props) {
         workspace: "",
     });
     const [listTeacher, setListTeacher] = useState([]);
+
+    useEffect(() => {
+        return () => {
+            console.log("component did unmount");
+            setTeacher({
+                id: "",
+                name: "",
+                level: "",
+                phone: "",
+                email: "",
+                workspace: "",
+            });
+            setProject({
+                nameProject: "",
+                nameTeacher: "",
+                phoneTeacher: "",
+                emailTeacher: "",
+                workspaceTeacher: "",
+                majors: "",
+                nameStudent: "",
+                phoneStudent: "",
+                emailStudent: "",
+                projectContent: "",
+                projectRequest: "",
+            })
+        }
+    }, [open])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -83,7 +109,7 @@ export function ProjectDialog(props) {
             nameTeacher: teacher.name,
         }
 
-        const create = createProject(data);
+        const create = await createProject(data);
         if (create.status === 200) {
             console.log(create.data);
             onClose();

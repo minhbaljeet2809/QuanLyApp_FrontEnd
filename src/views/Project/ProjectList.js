@@ -57,7 +57,7 @@ export default function ProjectList() {
             const result = await getAllProject();
             const data = result.data;
             const projectData = data.map((value, key) => {
-                if (value['nameStudent'] == null) {
+                if (value['nameStudent'] == "" || value['nameStudent'] == null) {
                     value['nameStudent'] = "Chưa có sinh viên đăng ký";
                 }
                 // value['state'] = value['state'] ? 'Đã đăng ký' : 'chưa đăng ký';

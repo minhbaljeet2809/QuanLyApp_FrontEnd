@@ -12,14 +12,13 @@ export function TextFieldCustom(props) {
         select,
         rowsMax
     } = props
-
     const [currency, setCurrency] = React.useState("");
-
     useEffect(() => {
         setCurrency(value);
+        return () => {
+            setCurrency("");
+        }
     }, [value]);
-    console.log(value);
-
     const handleChange = (event) => {
         setCurrency(event.target.value);
         let name = event.target.name;
