@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Box, Button } from '@material-ui/core';
 import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
 import GridContainer from 'components/Grid/GridContainer';
@@ -8,6 +8,8 @@ import Table from "components/Table/Table.js";
 import Card from "components/Card/Card.js";
 import axios from 'axios';
 import _ from 'lodash';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import { NewsDialog } from './NewsDialog';
 
 const styles = {
     cardCategoryWhite: {
@@ -45,6 +47,10 @@ export default function NewsList() {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [newsList, setNewsList] = useState([]);
+    const [openDialog, setOpenDialog] = useState({
+        open: false,
+        idNews: ""
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -67,18 +73,45 @@ export default function NewsList() {
             <GridItem xs={12} sm={12} md={12}>
                 <Card>
                     <CardHeader color="primary">
-                        <h4 className={classes.cardTitleWhite}>
-                            Danh Sách tin tức
-                        </h4>
+                        <Box display='flex' justifyContent="space-between" alignItems="center">
+                            <h4 className={classes.cardTitleWhite}>
+                                Danh sách tin tức
+                            </h4>
+                            <Button
+                                onClick={() => {
+                                    setOpenDialog((pre) => ({
+                                        ...pre,
+                                        open: true
+                                    }));
+                                }}>
+                                <AddBoxIcon />
+                            </Button>
+                        </Box>
                     </CardHeader>
                     <CardBody>
                         <Table
                             tableHeaderColor="primary"
-                            tableHead={["TT","Tiêu đề", "Mô tả", "Lượt xem","Chi tiết"]}
+                            tableHead={["TT", "Tiêu đề", "Mô tả", "Lượt xem", "Chi tiết", "Xoá"]}
                             tableData={newsList}
+                            actionView={(id) => {
+                                setOpenDialog({
+                                    open: true,
+                                    idNews: id
+                                });
+                            }}
                         />
                     </CardBody>
                 </Card>
+                <NewsDialog
+                    open={openDialog.open}
+                    onClose={() => {
+                        setOpenDialog({
+                            open: false,
+                            idNews: ""
+                        })
+                    }}
+                    idNews={openDialog.idNews}
+                />
             </GridItem>
         </GridContainer>
     );
