@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 /*!
 
 =========================================================
@@ -24,9 +26,9 @@ import LocationOn from "@material-ui/icons/LocationOn";
 import Notifications from "@material-ui/icons/Notifications";
 import Unarchive from "@material-ui/icons/Unarchive";
 import Language from "@material-ui/icons/Language";
-import BookIcon from '@material-ui/icons/Book';
-import AnnouncementIcon from '@material-ui/icons/Announcement';
-import GroupIcon from '@material-ui/icons/Group';
+import BookIcon from "@material-ui/icons/Book";
+import AnnouncementIcon from "@material-ui/icons/Announcement";
+import GroupIcon from "@material-ui/icons/Group";
 // core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import UserProfile from "views/UserProfile/UserProfile.js";
@@ -42,72 +44,41 @@ import TeacherList from "views/Teacher/TeacherList";
 import StudentList from "views/Student/StudentList";
 import Project from "views/Project/Project";
 
-
 const dashboardRoutes = [
   {
     path: "/dashboard",
     name: "Dashboard",
     icon: Dashboard,
     component: DashboardPage,
-    layout: "/admin"
+    layout: "/admin",
   },
-  // {
-  //   path: "/user",
-  //   name: "User Profile",
-  //   icon: Person,
-  //   component: UserProfile,
-  //   layout: "/admin"
-  // },
-  // {
-  //   path: "/table",
-  //   name: "Table List",
-  //   icon: "content_paste",
-  //   component: TableList,
-  //   layout: "/admin"
-  // },
-  // {
-  //   path: "/typography",
-  //   name: "Typography",
-  //   // rtlName: "طباعة",
-  //   icon: LibraryBooks,
-  //   component: Typography,
-  //   layout: "/admin"
-  // },
-  // {
-  //   path: "/icons",
-  //   name: "Icons",
-  //   // rtlName: "الرموز",
-  //   icon: BubbleChart,
-  //   component: Icons,
-  //   layout: "/admin"
-  // },
   {
     path: "/news",
     name: "Danh sách tin tức",
     icon: AnnouncementIcon,
     component: NewsList,
-    layout: "/admin"
+    layout: "/admin",
   },
   {
     path: "/teacher",
     name: "Danh sách giáo viên",
     icon: Person,
     component: TeacherList,
-    layout: "/admin"
-  }, 
+    layout: "/admin",
+  },
   {
     path: "/student",
     name: "Danh sách sinh viên",
     icon: GroupIcon,
     component: StudentList,
-    layout: "/admin"
+    layout: "/admin",
   },
   {
     path: "/project",
     name: "Danh sách đồ án",
     icon: LibraryBooks,
     component: Project,
-    layout: "/admin"
+    layout: "/admin",
   },
 ];
 

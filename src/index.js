@@ -21,9 +21,4 @@ import ReactDOM from "react-dom";
 import "assets/css/material-dashboard-react.css?v=1.9.0";
 import App from "app";
 
-
-ReactDOM.render(
-  <App />
-  ,
-  document.getElementById("root")
-);
+ReactDOM.render(<App />, document.getElementById("root"));

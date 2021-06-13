@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,11 +18,11 @@ const styles = {
       margin: "0",
       fontSize: "14px",
       marginTop: "0",
-      marginBottom: "0"
+      marginBottom: "0",
     },
     "& a,& a:hover,& a:focus": {
-      color: "#FFFFFF"
-    }
+      color: "#FFFFFF",
+    },
   },
   cardTitleWhite: {
     color: "#FFFFFF",
@@ -34,9 +36,9 @@ const styles = {
       color: "#777",
       fontSize: "65%",
       fontWeight: "400",
-      lineHeight: "1"
-    }
-  }
+      lineHeight: "1",
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -63,7 +65,7 @@ export default function TableList() {
                 ["Sage Rodriguez", "Netherlands", "Baileux", "$56,142"],
                 ["Philip Chaney", "Korea, South", "Overland Park", "$38,735"],
                 ["Doris Greene", "Malawi", "Feldkirchen in Kärnten", "$63,542"],
-                ["Mason Porter", "Chile", "Gloucester", "$78,615"]
+                ["Mason Porter", "Chile", "Gloucester", "$78,615"],
               ]}
             />
           </CardBody>
@@ -92,16 +94,16 @@ export default function TableList() {
                   "Philip Chaney",
                   "$38,735",
                   "Korea, South",
-                  "Overland Park"
+                  "Overland Park",
                 ],
                 [
                   "5",
                   "Doris Greene",
                   "$63,542",
                   "Malawi",
-                  "Feldkirchen in Kärnten"
+                  "Feldkirchen in Kärnten",
                 ],
-                ["6", "Mason Porter", "$78,615", "Chile", "Gloucester"]
+                ["6", "Mason Porter", "$78,615", "Chile", "Gloucester"],
               ]}
             />
           </CardBody>
