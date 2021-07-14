@@ -1,14 +1,26 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
 
-export function TextFieldCustom(props) {
+export function InputCustom(props) {
   const { label, name, value, readOnly, handle, rowsMax } = props;
+  //   const [currency, setCurrency] = React.useState("");
+  //   useEffect(() => {
+  //     setCurrency(value);
+  //     return () => {
+  //       setCurrency("");
+  //     };
+  //   }, [value]);
   const handleChange = (event) => {
-    let name = event.target.name;
-    let value = event.target.value;
-    handle(name, value);
+    // setCurrency(event.target.value);
+    const name = event.target.name;
+    const value = event.target.value;
+    const payload = {
+      name: name,
+      value: value,
+    };
+    handle(payload);
   };
 
   return (

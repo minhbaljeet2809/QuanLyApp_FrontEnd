@@ -9,16 +9,22 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 // core components
 import styles from "assets/jss/material-dashboard-react/components/tableStyle.js";
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import RegularButton from 'components/CustomButtons/Button';
-import VisibilityIcon from '@material-ui/icons/Visibility';
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import RegularButton from "components/CustomButtons/Button";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 
 const useStyles = makeStyles(styles);
 
 export default function CustomTable(props) {
   const classes = useStyles();
-  const { tableHead, tableData, tableHeaderColor, actionView, actionDelete} = props;
+  const {
+    tableHead,
+    tableData,
+    tableHeaderColor,
+    actionView,
+    actionDelete,
+  } = props;
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
@@ -44,11 +50,12 @@ export default function CustomTable(props) {
             return (
               <TableRow key={keyRow} className={classes.tableBodyRow}>
                 {propRow.map((prop, key) => {
-
                   if (key === 0) {
-                    return (<TableCell className={classes.tableCell} key={key}>
-                      {keyRow + 1}
-                    </TableCell>);
+                    return (
+                      <TableCell className={classes.tableCell} key={key}>
+                        {keyRow + 1}
+                      </TableCell>
+                    );
                   }
                   return (
                     <TableCell className={classes.tableCell} key={key}>
@@ -57,12 +64,24 @@ export default function CustomTable(props) {
                   );
                 })}
                 <TableCell className={classes.tableCell} id-row={propRow[0]}>
-                  <RegularButton size="sm" color="info" onClick={(e) => { actionView(id) }} >
+                  <RegularButton
+                    size="sm"
+                    color="info"
+                    onClick={() => {
+                      actionView(id);
+                    }}
+                  >
                     <VisibilityIcon />
                   </RegularButton>
                 </TableCell>
                 <TableCell className={classes.tableCell}>
-                  <RegularButton size="sm" color="danger" onClick={(e) => { actionDelete(id) }} >
+                  <RegularButton
+                    size="sm"
+                    color="danger"
+                    onClick={() => {
+                      actionDelete(id);
+                    }}
+                  >
                     <DeleteIcon />
                   </RegularButton>
                 </TableCell>
@@ -76,7 +95,7 @@ export default function CustomTable(props) {
 }
 
 CustomTable.defaultProps = {
-  tableHeaderColor: "gray"
+  tableHeaderColor: "gray",
 };
 
 CustomTable.propTypes = {
@@ -87,8 +106,8 @@ CustomTable.propTypes = {
     "success",
     "info",
     "rose",
-    "gray"
+    "gray",
   ]),
   tableHead: PropTypes.arrayOf(PropTypes.string),
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
+  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
 };

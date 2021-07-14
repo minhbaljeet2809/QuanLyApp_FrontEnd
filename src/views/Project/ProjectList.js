@@ -8,12 +8,16 @@ import GridItem from "components/Grid/GridItem";
 import React, { useEffect, useState } from "react";
 import Table from "components/Table/Table.js";
 import Card from "components/Card/Card.js";
-import _ from "lodash";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { ProjectDialog } from "./Dialog/ProjectDialog";
-import { getAllProject } from "service/Api";
 import { ProjectDialogDelete } from "./Dialog/ProjectDeleteDialog";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loadList,
+  selectProjectList,
+} from "../../redux/slice/projectListSlice";
+import { loadDetail } from "redux/slice/projectSlice";
 
 const styles = {
   cardCategoryWhite: {
@@ -51,37 +55,20 @@ export default function ProjectList() {
   const classes = useStyles();
   const { path } = useRouteMatch();
   const history = useHistory();
-  const [loading, setLoading] = useState(false);
-  const [projectList, setProjectList] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState({
     open: false,
     idProject: "",
   });
+  const dispatch = useDispatch();
+  const { listProject } = useSelector(selectProjectList);
+
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await getAllProject();
-      const data = result.data;
-      const projectData = data.map((value, key) => {
-        if (value["nameStudent"] == "" || value["nameStudent"] == null) {
-          value["nameStudent"] = "Chưa có sinh viên đăng ký";
-        }
-        return _.pick(value, [
-          "id",
-          "name",
-          "majors",
-          "nameTeacher",
-          "nameStudent",
-        ]);
-      });
-      const newData = projectData.map((value) => {
-        return Object.values(value);
-      });
-      setProjectList(newData);
-      setLoading(false);
-    };
-    fetchData();
-  }, [loading]);
+    getData();
+  }, []);
+  const getData = async () => {
+    await dispatch(loadList());
+  };
 
   return (
     <GridContainer>
@@ -97,6 +84,7 @@ export default function ProjectList() {
               <Button
                 onClick={() => {
                   setOpenDialog(true);
+                  dispatch(loadDetail());
                 }}
               >
                 <AddBoxIcon />
@@ -115,7 +103,7 @@ export default function ProjectList() {
                 "Xem",
                 "Xoá",
               ]}
-              tableData={projectList}
+              tableData={listProject}
               actionView={(id) => {
                 history.push(`${path}/${id}`);
               }}
@@ -132,7 +120,7 @@ export default function ProjectList() {
           open={openDialog}
           onClose={() => {
             setOpenDialog(false);
-            setLoading(true);
+            getData(true);
           }}
         />
       </GridItem>
@@ -144,7 +132,7 @@ export default function ProjectList() {
             open: false,
             idProject: "",
           });
-          setLoading(true);
+          getData(true);
         }}
       />
     </GridContainer>

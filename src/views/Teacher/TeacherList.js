@@ -8,12 +8,16 @@ import GridItem from "components/Grid/GridItem";
 import React, { useEffect, useState } from "react";
 import Table from "components/Table/Table.js";
 import Card from "components/Card/Card.js";
-import axios from "axios";
 import _ from "lodash";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import { TeacherCreateDialog } from "./TeacherCreateDialog";
-import { getAllTeacher } from "service/Api";
 import { TeacherDialogDelete } from "./TeacherDeleteDialog";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectTeacher,
+  loadListTeacher,
+  loadTeacher,
+} from "../../redux/slice/teacherSlice";
 
 const styles = {
   cardCategoryWhite: {
@@ -49,39 +53,24 @@ const useStyles = makeStyles(styles);
 
 export default function TeacherList() {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
-  const [openDialog, setDialog] = useState({
-    state: "",
-    open: false,
-    idTeacher: "",
-  });
+  const { listTable } = useSelector(selectTeacher);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    await dispatch(loadListTeacher());
+  };
+  const getTeacher = async (id) => {
+    await dispatch(loadTeacher(id));
+  };
+
+  const [openDialog, setDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState({
     open: false,
     idTeacher: "",
   });
-  const [teacherList, setTeacherList] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await getAllTeacher();
-      const data = result.data;
-      const teacherData = data.map((value, key) => {
-        return _.pick(value, [
-          "id",
-          "name",
-          "level",
-          "phone",
-          "email",
-          "workspace",
-        ]);
-      });
-      const newData = teacherData.map((value) => {
-        return Object.values(value);
-      });
-      setTeacherList(newData);
-    };
-    fetchData();
-    setLoading(false);
-  }, [loading]);
   return (
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
@@ -95,11 +84,8 @@ export default function TeacherList() {
               <h4 className={classes.cardTitleWhite}>Danh sách giảng viên</h4>
               <Button
                 onClick={() => {
-                  setDialog({
-                    state: "create",
-                    open: true,
-                    idTeacher: "",
-                  });
+                  setDialog(true);
+                  getTeacher("");
                 }}
               >
                 <AddBoxIcon />
@@ -119,13 +105,14 @@ export default function TeacherList() {
                 "Xem",
                 "Xoá",
               ]}
-              tableData={teacherList}
+              tableData={listTable}
               actionView={(id) => {
                 setDialog({
                   state: "view",
                   open: true,
                   idTeacher: id,
                 });
+                getTeacher(id);
               }}
               actionDelete={(id) => {
                 setOpenDeleteDialog({
@@ -138,17 +125,11 @@ export default function TeacherList() {
         </Card>
       </GridItem>
       <TeacherCreateDialog
-        open={openDialog.open}
+        open={openDialog}
         onClose={() => {
-          setDialog({
-            state: "",
-            open: false,
-            idTeacher: "",
-          });
-          setLoading(true);
+          setDialog(false);
+          getData();
         }}
-        state={openDialog.state}
-        idTeacher={openDialog.idTeacher}
       />
       <TeacherDialogDelete
         open={openDeleteDialog.open}
@@ -157,7 +138,7 @@ export default function TeacherList() {
             open: false,
             idTeacher: "",
           });
-          setLoading(true);
+          getData();
         }}
         idTeacher={openDeleteDialog.idTeacher}
       />

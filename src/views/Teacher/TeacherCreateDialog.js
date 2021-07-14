@@ -6,80 +6,44 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
   ThemeProvider,
   createMuiTheme,
   Box,
 } from "@material-ui/core";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import axios from "axios";
 import EditIcon from "@material-ui/icons/Edit";
-import { getTeacherByID, createTeacher, updateTeacher } from "service/Api";
+import { createTeacher, updateTeacher } from "service/Api";
+import { InputCustom } from "components/InputComponent/Input";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectTeacher,
+  changeValueTeacher,
+} from "../../redux/slice/teacherSlice";
 
 const theme = createMuiTheme({
   overrides: {},
 });
 
 export function TeacherCreateDialog(props) {
-  const { open, onClose, state, idTeacher } = props;
-  const [teacher, setTeacher] = useState({
-    name: "",
-    level: "",
-    birthday: "",
-    address: "",
-    phone: "",
-    email: "",
-    image: "",
-    workspace: "",
-    description: "",
-  });
+  const { open, onClose } = props;
+  const { teacher } = useSelector(selectTeacher);
+  const dispatch = useDispatch();
+  const handleChange = (payload) => {
+    dispatch(changeValueTeacher(payload));
+  };
+
   const [readOnly, setReadOnly] = useState(false);
   const [stateDialog, setStateDialog] = useState("");
   useEffect(() => {
-    setStateDialog(state);
-    const fetchData = async () => {
-      const getTeacher = await getTeacherByID(idTeacher);
-      if (getTeacher.status === 200) {
-        const data = getTeacher.data;
-        setTeacher((state) => ({
-          ...state,
-          name: data.name,
-          level: data.level,
-          birthday: data.birthday,
-          address: data.address,
-          phone: data.phone,
-          email: data.email,
-          image: data.image,
-          workspace: data.workspace,
-          description: data.description,
-        }));
-      }
-    };
-    if (state === "view" && idTeacher) {
-      setReadOnly(true);
-      fetchData();
-    }
-    if (state === "create") {
-      setTeacher({
-        name: "",
-        level: "",
-        birthday: "",
-        address: "",
-        phone: "",
-        email: "",
-        image: "",
-        workspace: "",
-        description: "",
-      });
+    if (teacher.id == "") {
+      setStateDialog("create");
       setReadOnly(false);
     }
-  }, [state, idTeacher]);
-
-  const handleChangeInput = (event) => {
-    const inputName = event.target.name;
-    const value = event.target.value;
-    setTeacher((state) => ({ ...state, [inputName]: value }));
-  };
+    if (teacher.id !== "") {
+      setStateDialog("view");
+      setReadOnly(true);
+    }
+  }, [teacher.id]);
 
   const handleCreate = async () => {
     const create = await createTeacher(teacher);
@@ -87,14 +51,16 @@ export function TeacherCreateDialog(props) {
       alert("Tạo thành công");
     }
     onClose();
+    setStateDialog("view");
   };
 
   const handleUpdate = async () => {
-    const update = await updateTeacher(idTeacher, teacher);
+    const update = await updateTeacher(teacher.id, teacher);
     if (update.status === 200) {
       alert("Cập nhật thành công");
     }
     onClose();
+    setStateDialog("view");
   };
 
   const viewTitle = useMemo(() => {
@@ -169,90 +135,50 @@ export function TeacherCreateDialog(props) {
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>{viewTitle}</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
+          <InputCustom
             label="Họ và Tên Giảng viên"
-            type="text"
-            fullWidth
             name="name"
-            onChange={(e) => {
-              handleChangeInput(e);
-            }}
             value={teacher.name}
-            InputProps={{
-              readOnly: readOnly,
+            readOnly={readOnly}
+            handle={(e) => {
+              handleChange(e);
             }}
-            variant="outlined"
           />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="level"
+          <InputCustom
             label="Trình độ học vấn"
-            type="text"
-            fullWidth
             name="level"
-            onChange={(e) => {
-              handleChangeInput(e);
-            }}
             value={teacher.level}
-            InputProps={{
-              readOnly: readOnly,
+            readOnly={readOnly}
+            handle={(e) => {
+              handleChange(e);
             }}
-            variant="outlined"
           />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="phone"
-            label="số điện thoại"
-            type="text"
-            fullWidth
+          <InputCustom
+            label="Số điện thoại"
             name="phone"
-            onChange={(e) => {
-              handleChangeInput(e);
-            }}
             value={teacher.phone}
-            InputProps={{
-              readOnly: readOnly,
+            readOnly={readOnly}
+            handle={(e) => {
+              handleChange(e);
             }}
-            variant="outlined"
           />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="email"
-            label="email"
-            type="text"
-            fullWidth
+          <InputCustom
+            label="Email"
             name="email"
-            onChange={(e) => {
-              handleChangeInput(e);
-            }}
             value={teacher.email}
-            InputProps={{
-              readOnly: readOnly,
+            readOnly={readOnly}
+            handle={(e) => {
+              handleChange(e);
             }}
-            variant="outlined"
           />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="workspace"
+          <InputCustom
             label="Nơi làm việc"
-            type="text"
-            fullWidth
             name="workspace"
-            onChange={(e) => {
-              handleChangeInput(e);
-            }}
             value={teacher.workspace}
-            InputProps={{
-              readOnly: readOnly,
+            readOnly={readOnly}
+            handle={(e) => {
+              handleChange(e);
             }}
-            variant="outlined"
           />
         </DialogContent>
         <DialogActions>{viewAction}</DialogActions>

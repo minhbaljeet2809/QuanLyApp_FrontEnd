@@ -10,10 +10,11 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
 import ProjectDetail from "./ProjectDetail";
-import { getProjectById, getAllTeacher, getStudent } from "service/Api";
 import { ProjectProgress } from "./ProjectProgress";
 import _ from "lodash";
-
+import { useDispatch, useSelector } from "react-redux";
+import { selectTeacher, loadListTeacher } from "../../redux/slice/teacherSlice";
+import { loadDetail, selectProject } from "../../redux/slice/projectSlice";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -54,41 +55,16 @@ export default function ProjectContainer() {
   const { params } = useRouteMatch();
   const classes = useStyles();
   const theme = useTheme();
+  const { listTeachers } = useSelector(selectTeacher);
+  const { detailProject } = useSelector(selectProject);
+  const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
-  const [loading, setLoading] = useState(false);
-  const [project, setProject] = useState({
-    nameProject: "",
-    idTeacher: "",
-    nameTeacher: "",
-    phoneTeacher: "",
-    emailTeacher: "",
-    workspaceTeacher: "",
-    majors: "",
-    idStudent: "",
-    nameStudent: "",
-    phoneStudent: "",
-    emailStudent: "",
-    projectContent: "",
-    projectRequest: "",
-  });
-  const [listStudents, setListStudents] = useState([]);
-  const [student, setStudent] = useState({
-    id: "",
-    name: "",
-    phone: "",
-    email: "",
-    majors: "",
-  });
-
-  const [teacher, setTeacher] = useState({
-    id: "",
-    name: "",
-    level: "",
-    phone: "",
-    email: "",
-    workspace: "",
-  });
-  const [listTeachers, setListTeacher] = useState([]);
+  useEffect(() => {
+    getData();
+  }, []);
+  const getData = async () => {
+    await dispatch(loadDetail(params.id));
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -97,104 +73,10 @@ export default function ProjectContainer() {
   const handleChangeIndex = (index) => {
     setValue(index);
   };
-  const fetchListTeachers = async () => {
-    const dataTeacher = await getAllTeacher();
-    if (dataTeacher.status === 200) {
-      const listDataTeacher = dataTeacher.data.map((value, key) => {
-        return _.pick(value, [
-          "id",
-          "name",
-          "level",
-          "phone",
-          "email",
-          "workspace",
-        ]);
-      });
-      setListTeacher(listDataTeacher);
-    }
-  };
-  const fetchListStudents = async () => {
-    const result = await getStudent();
-    const data = result.data;
-    const studentData = data.map((value, key) => {
-      return _.pick(value, [
-        "id",
-        "name",
-        "code",
-        "birthday",
-        "address",
-        "phone",
-        "email",
-        "majors",
-        "schoolYear",
-      ]);
-    });
-    setListStudents(studentData);
-  };
-
-  const fetchProject = async () => {
-    const dataProject = await getProjectById(params.id);
-    if (dataProject.status === 200) {
-      const data = dataProject.data;
-      setProject((preState) => ({
-        ...preState,
-        nameProject: data.name,
-        idTeacher: data.idTeacher,
-        // nameTeacher: data.nameTeacher,
-        // phoneTeacher: data.phoneTeacher,
-        // emailTeacher: data.emailTeacher,
-        // workspaceTeacher: data.workspaceTeacher,
-        idStudent: data.idStudent,
-        majors: data.majors,
-        // nameStudent: data.nameStudent,
-        // phoneStudent: data.phoneStudent,
-        // emailStudent: data.emailStudent,
-        projectContent: data.projectContent,
-        projectRequest: data.projectRequest,
-      }));
-    }
-  };
 
   useEffect(() => {
-    fetchListTeachers();
-    fetchListStudents();
+    dispatch(loadListTeacher());
   }, []);
-
-  useEffect(() => {
-    fetchProject();
-    return () => {
-      console.log("component umount");
-    };
-  }, [params.id, loading]);
-
-  useEffect(() => {
-    if (project.idTeacher !== "") {
-      const teacher = _.filter(listTeachers, { id: project.idTeacher });
-      setTeacher((preState) => ({
-        ...preState,
-        id: teacher[0].id,
-        name: teacher[0].name,
-        level: teacher[0].level,
-        phone: teacher[0].phone,
-        email: teacher[0].email,
-        workspace: teacher[0].workspace,
-      }));
-      if (project.idStudent !== "") {
-        const student = _.filter(listStudents, { id: project.idStudent });
-        setStudent((preState) => ({
-          ...preState,
-          id: student[0].id,
-          name: student[0].name,
-          phone: student[0].phone,
-          email: student[0].email,
-        }));
-      }
-    }
-  }, [listStudents, listTeachers, project]);
-
-  const handleChangeSelectTeacher = (name, value) => {};
-
-  const handleChangeSelectStudent = (name, value) => {};
 
   return (
     <div className={classes.root}>
@@ -220,26 +102,14 @@ export default function ProjectContainer() {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <ProjectDetail
-            project={project}
-            listTeachers={listTeachers}
-            listStudents={listStudents}
-            handleChangeTeacher={(name, value) => {
-              handleChangeSelectTeacher(name, value);
-            }}
-            handleChangeStudent={(name, value) => {
-              handleChangeSelectStudent(name, value);
-            }}
-            teacher={teacher}
-            student={student}
-          />
+          <ProjectDetail project={detailProject} listTeachers={listTeachers} />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
           <ProjectProgress
             idProject={params.id}
             stage="stage1"
             title="đợt 1"
-            nameStudent={project.nameStudent}
+            nameStudent={detailProject.nameStudent}
           />
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
@@ -247,7 +117,7 @@ export default function ProjectContainer() {
             idProject={params.id}
             stage="stage2"
             title="đợt 2"
-            nameStudent={project.nameStudent}
+            nameStudent={detailProject.nameStudent}
           />
         </TabPanel>
         <TabPanel value={value} index={3} dir={theme.direction}>
@@ -255,7 +125,7 @@ export default function ProjectContainer() {
             idProject={params.id}
             stage="stage3"
             title="đợt 3"
-            nameStudent={project.nameStudent}
+            nameStudent={detailProject.nameStudent}
           />
         </TabPanel>
         <TabPanel value={value} index={4} dir={theme.direction}>
@@ -263,7 +133,7 @@ export default function ProjectContainer() {
             idProject={params.id}
             stage="stage4"
             title="đợt 4"
-            nameStudent={project.nameStudent}
+            nameStudent={detailProject.nameStudent}
           />
         </TabPanel>
       </SwipeableViews>

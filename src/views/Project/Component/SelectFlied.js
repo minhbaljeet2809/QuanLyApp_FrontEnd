@@ -1,19 +1,17 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
+import _ from "lodash";
 
 export function SelectCustom(props) {
   const { label, name, value, readOnly, handle, listValueSelect } = props;
 
-  const [currency, setCurrency] = React.useState(value);
-
   const handleChange = (event) => {
-    setCurrency(event.target.value);
-    let name = event.target.name;
     let value = event.target.value;
-    handle(name, value);
+    const teacher = _.find(listValueSelect, { id: value });
+    handle(teacher);
   };
 
   return (
@@ -21,7 +19,7 @@ export function SelectCustom(props) {
       margin="dense"
       select
       label={label}
-      value={currency}
+      value={value}
       onChange={handleChange}
       variant="outlined"
       name={name}

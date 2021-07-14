@@ -6,13 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 export function Selection(props) {
   const { label, name, value, handle, listValueSelect, readOnly } = props;
-  const [currency, setCurrency] = React.useState(value);
-  useEffect(() => {
-    setCurrency(value);
-  }, [value]);
-
   const handleChange = (event) => {
-    setCurrency(event.target.value);
     let name = event.target.name;
     let value = event.target.value;
     handle(name, value);
@@ -22,7 +16,7 @@ export function Selection(props) {
     <TextField
       select
       label={label}
-      value={currency}
+      value={value}
       onChange={handleChange}
       variant="outlined"
       margin="dense"

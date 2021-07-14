@@ -36,7 +36,7 @@ export function ProjectDialogDelete(props) {
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
         {!check
-          ? "Không thể xoá, đề tài đã có ng đăng ký"
+          ? "Không thể xoá, đề tài đã có sinh viên đăng ký"
           : "Xác nhận xoá đề tài"}
       </DialogTitle>
       {!check ? (

@@ -31,8 +31,8 @@ export const getAllTeacher = (config) => {
 };
 
 // lấy chi tiết giảng viên theo id
-export const getTeacherByID = (id, config) => {
-  return Http.get(`/teacher/getById/${id}`, config);
+export const getTeacherByID = async (id, config) => {
+  return await Http.get(`/teacher/getById/${id}`, config);
 };
 
 // tạo mới giảng viên
@@ -56,18 +56,23 @@ export const deleteTeacher = (id, config) => {
 };
 
 // lấy danh sách đồ án
-export const getAllProject = (config) => {
-  return Http.get("/project/getAll", config);
+export const getAllProject = async (config) => {
+  return await Http.get("/project/getAll", config);
 };
 
 // lấy thông tin chi tiết đồ án theo Id
-export const getProjectById = (id, config) => {
-  return Http.get(`/project/getId/${id}`, config);
+export const getProjectById = async (id, config) => {
+  return await Http.get(`/project/getId/${id}`, config);
 };
 
 // tạo mới đồ án
-export const createProject = (data, config) => {
-  return Http.post("/project/create", data, config);
+export const createProject = async (data, config) => {
+  return await Http.post("/project/create", data, config);
+};
+
+// Cập nhật đồ án
+export const updateProject = async (data, config) => {
+  return await Http.post("project/update", data, config);
 };
 
 // Xoá đồ án
@@ -85,6 +90,11 @@ export const createProjectProgress = (data, config) => {
   return Http.post(`/projectProgress/create`, data, config);
 };
 
+// sửa tiến độ đồ án
+export const updateProjectProgress = async (id, data, config) => {
+  return await Http.post(`/projectProgress/update/${id}`, data, config);
+};
+
 // lấy thông tin chi tiết công việc đồ đán theo tiếng độ
 export const getProjectProgressLogs = (idProjectProgress, config) => {
   return Http.get(`/projectProgressLog/${idProjectProgress}`, config);
@@ -93,6 +103,21 @@ export const getProjectProgressLogs = (idProjectProgress, config) => {
 // tạo project progress log
 export const createProgressLog = (data, config) => {
   return Http.post(`/projectProgressLog/create`, data, config);
+};
+
+// sửa project progress log
+export const updateProgressLog = async (id, data, config) => {
+  return await Http.post(`/projectProgressLog/update/${id}`, data, config);
+};
+
+// getOne progress log
+export const getProjectProgressLogsById = async (id, config) => {
+  return await Http.get(`/projectProgressLog/get/${id}`, config);
+};
+
+// xoá progress log
+export const deleteProjectProgressLog = async (id, config) => {
+  return await Http.delete(`/projectProgressLog/delete/${id}`, config);
 };
 
 // tk danh sách đồ án đã được đăng ký

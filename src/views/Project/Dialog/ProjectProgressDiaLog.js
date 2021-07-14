@@ -53,7 +53,6 @@ export function ProjectProgressDialog(props) {
   const handleChangeSelect = (name, value) => {
     setProgress((state) => ({ ...state, [name]: value }));
   };
-  console.log(progress);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>

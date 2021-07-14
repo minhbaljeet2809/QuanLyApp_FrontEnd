@@ -9,18 +9,38 @@ import {
   TextField,
 } from "@material-ui/core";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { createProgressLog } from "service/Api";
+import {
+  createProgressLog,
+  updateProgressLog,
+  getProjectProgressLogsById,
+} from "service/Api";
 import { TextFieldCustom } from "../Component/TextFliedCustom";
 
 export function ProjectProgressLogDialog(props) {
-  const { open, onClose, state, idProjectProgress } = props;
+  const { open, onClose, state, idProjectProgress, nameStudent, idLog } = props;
 
   const [progressLog, setProgressLog] = useState({
     content: "",
     percent: "",
-    worker: "",
+    worker: nameStudent,
   });
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getProjectProgressLogsById(idLog);
+      console.log({ data: data });
+      if (data.status === 200) {
+        setProgressLog({
+          content: data.data.content,
+          percent: data.data.percent,
+          worker: data.data.worker,
+        });
+      }
+    };
+
+    if (idLog !== "") {
+      fetchData();
+    }
+  }, [idLog]);
 
   const handleChangeInput = (name, value) => {
     setProgressLog((state) => ({ ...state, [name]: value }));
@@ -41,7 +61,45 @@ export function ProjectProgressLogDialog(props) {
     }
   };
 
-  const handleUpdate = async () => {};
+  const handleUpdate = async () => {
+    const data = {
+      idProjectProgress: idProjectProgress,
+      state: state,
+      content: progressLog.content,
+      percent: progressLog.percent,
+      worker: progressLog.worker,
+    };
+    const update = await updateProgressLog(idLog, data);
+    console.log(update);
+    if (update.status === 200) {
+      onClose();
+    }
+  };
+
+  const btnView = useMemo(() => {
+    if (idLog !== "") {
+      return (
+        <>
+          <Button onClick={onClose} color="primary">
+            Đóng
+          </Button>
+          <Button onClick={handleUpdate} color="primary">
+            Cập nhật
+          </Button>
+        </>
+      );
+    }
+    return (
+      <>
+        <Button onClick={onClose} color="primary">
+          Đóng
+        </Button>
+        <Button onClick={handleCreate} color="primary">
+          Tạo mới
+        </Button>
+      </>
+    );
+  }, [idLog, progressLog]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -73,14 +131,7 @@ export function ProjectProgressLogDialog(props) {
           }}
         />
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Đóng
-        </Button>
-        <Button onClick={handleCreate} color="primary">
-          Tạo mới
-        </Button>
-      </DialogActions>
+      <DialogActions>{btnView}</DialogActions>
     </Dialog>
   );
 }

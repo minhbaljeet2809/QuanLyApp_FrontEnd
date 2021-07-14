@@ -11,7 +11,7 @@ import AddBoxIcon from "@material-ui/icons/AddBox";
 import { Button, Box } from "@material-ui/core";
 import Table from "components/Table/Table.js";
 import _ from "lodash";
-import { getProjectProgressLogs } from "service/Api";
+import { getProjectProgressLogs, deleteProjectProgressLog } from "service/Api";
 import { ProjectProgressLogDialog } from "../Dialog/ProjectProgressLogDialog";
 
 const styles = {
@@ -48,9 +48,12 @@ const useStyles = makeStyles(styles);
 
 export function ProjectProgressLog(props) {
   const classes = useStyles();
-  const { idProjectProgress, stage } = props;
+  const { idProjectProgress, stage, nameStudent } = props;
   const [listProgressLogs, setListProgressLogs] = useState([]);
-  const [openProgressLog, setOpenProgressLog] = useState(false);
+  const [openProgressLog, setOpenProgressLog] = useState({
+    open: false,
+    idLog: "",
+  });
   const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
@@ -72,6 +75,13 @@ export function ProjectProgressLog(props) {
     setLoading(false);
   }, [idProjectProgress, loading]);
 
+  const deleteLog = async (id) => {
+    const deleteProgressLog = await deleteProjectProgressLog(id);
+    if (deleteProgressLog.status === 200) {
+      setLoading(true);
+    }
+  };
+
   return (
     <Card plain>
       <CardHeader plain color="primary">
@@ -79,7 +89,10 @@ export function ProjectProgressLog(props) {
           <h4 className={classes.cardTitleWhite}>Chi tiết báo cáo tiến độ</h4>
           <Button
             onClick={() => {
-              setOpenProgressLog(true);
+              setOpenProgressLog({
+                open: true,
+                idLog: "",
+              });
             }}
           >
             <AddBoxIcon />
@@ -95,19 +108,34 @@ export function ProjectProgressLog(props) {
             "Sinh viên thực hiện",
             "Tiến độ(%)",
             "Chỉnh xửa",
+            "Xoá",
           ]}
           tableData={listProgressLogs}
-          actionView={(id) => {}}
+          actionView={(id) => {
+            setOpenProgressLog({
+              open: true,
+              idLog: id,
+            });
+          }}
+          actionDelete={(id) => {
+            console.log("delete", { id: id });
+            deleteLog(id);
+          }}
         />
       </CardBody>
       <ProjectProgressLogDialog
-        open={openProgressLog}
+        open={openProgressLog.open}
         onClose={() => {
-          setOpenProgressLog(false);
+          setOpenProgressLog({
+            open: false,
+            idLog: "",
+          });
           setLoading(true);
         }}
         idProjectProgress={idProjectProgress}
         stage={stage}
+        nameStudent={nameStudent}
+        idLog={openProgressLog.idLog}
       />
     </Card>
   );

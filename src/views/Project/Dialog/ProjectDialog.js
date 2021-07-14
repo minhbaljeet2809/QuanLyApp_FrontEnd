@@ -9,114 +9,44 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import { TextFieldCustom } from "../Component/TextFliedCustom";
-import _ from "lodash";
 import { SelectCustom } from "../Component/SelectFlied";
-import { getAllTeacher, createProject } from "service/Api";
 import { Selection } from "components/InputComponent/Selection";
+import { selectTeacher, loadListTeacher } from "redux/slice/teacherSlice";
+import {
+  selectProject,
+  updateOrCreate,
+  actionCreate,
+} from "redux/slice/projectSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export function ProjectDialog(props) {
   const { open, onClose } = props;
-
-  const [project, setProject] = useState({
-    nameProject: "",
-    nameTeacher: "",
-    phoneTeacher: "",
-    emailTeacher: "",
-    workspaceTeacher: "",
-    majors: "",
-    nameStudent: "",
-    phoneStudent: "",
-    emailStudent: "",
-    projectContent: "",
-    projectRequest: "",
-  });
-
-  const [teacher, setTeacher] = useState({
-    id: "",
-    name: "",
-    level: "",
-    phone: "",
-    email: "",
-    workspace: "",
-  });
-  const [listTeacher, setListTeacher] = useState([]);
-
+  const { listTeachers } = useSelector(selectTeacher);
+  const { detailProject } = useSelector(selectProject);
+  const dispatch = useDispatch();
   useEffect(() => {
-    return () => {
-      setTeacher({
-        id: "",
-        name: "",
-        level: "",
-        phone: "",
-        email: "",
-        workspace: "",
-      });
-      setProject({
-        nameProject: "",
-        nameTeacher: "",
-        phoneTeacher: "",
-        emailTeacher: "",
-        workspaceTeacher: "",
-        majors: "",
-        nameStudent: "",
-        phoneStudent: "",
-        emailStudent: "",
-        projectContent: "",
-        projectRequest: "",
-      });
-    };
-  }, [open]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const dataTeacher = await getAllTeacher();
-      if (dataTeacher.status === 200) {
-        const listDataTeacher = dataTeacher.data.map((value, key) => {
-          return _.pick(value, [
-            "id",
-            "name",
-            "level",
-            "phone",
-            "email",
-            "workspace",
-          ]);
-        });
-        setListTeacher(listDataTeacher);
-      }
-    };
-    fetchData();
+    dispatch(loadListTeacher());
   }, []);
-
-  const handleChangeSelect = (name, value) => {
-    setProject((state) => ({ ...state, [name]: value }));
+  const handleChange = (name, value) => {
+    const payload = {
+      name: name,
+      value: value,
+    };
+    dispatch(updateOrCreate(payload));
   };
 
-  const handleChangeInput = (inputName, value) => {
-    setProject((state) => ({ ...state, [inputName]: value }));
-  };
-
-  const handleSelectTeacher = (name, value) => {
-    const getTeacher = _.find(listTeacher, { id: value });
-    setTeacher((preState) => ({
-      ...getTeacher,
-    }));
+  const handleSelectTeacher = (teacher) => {
+    const teacherName = `${teacher.level}. ${teacher.name}`;
+    handleChange("idTeacher", teacher.id);
+    handleChange("nameTeacher", teacherName);
+    handleChange("phoneTeacher", teacher.phone);
+    handleChange("emailTeacher", teacher.email);
+    handleChange("workspaceTeacher", teacher.workspace);
   };
 
   const handleCreate = async () => {
-    const data = {
-      name: project.nameProject,
-      projectRequest: project.projectRequest,
-      projectContent: project.projectContent,
-      majors: project.majors,
-      idTeacher: teacher.id,
-      nameTeacher: teacher.name,
-    };
-
-    const create = await createProject(data);
-    if (create.status === 200) {
-      console.log(create.data);
-      onClose();
-    }
+    await dispatch(actionCreate(detailProject));
+    onClose();
   };
 
   return (
@@ -125,38 +55,38 @@ export function ProjectDialog(props) {
       <DialogContent>
         <TextFieldCustom
           label="Tên Đồ Án"
-          name="nameProject"
-          value={project.nameProject}
+          name="name"
+          value={detailProject.name}
           handle={(name, value) => {
-            handleChangeInput(name, value);
+            handleChange(name, value);
           }}
         />
         <SelectCustom
           label="Tên Giảng viên"
           name="nameTeacher"
-          value={`${teacher.level}. ${teacher.name}`}
-          handle={(name, value) => {
-            handleSelectTeacher(name, value);
+          value={detailProject.idTeacher}
+          handle={(teacher) => {
+            handleSelectTeacher(teacher);
           }}
           select={true}
-          listValueSelect={listTeacher}
+          listValueSelect={listTeachers}
         />
         <TextFieldCustom
           label="Điện thoại Giảng Viên"
           name="phoneTeacher"
-          value={teacher.phone}
+          value={detailProject.phoneTeacher}
           readOnly={true}
         />
         <TextFieldCustom
           label="Đỉa chỉ email Giảng Viên"
           name="emailTeacher"
-          value={teacher.email}
+          value={detailProject.emailTeacher}
           readOnly={true}
         />
         <TextFieldCustom
           label="Nơi công tác Giảng Viên"
           name="workspaceTeacher"
-          value={teacher.workspace}
+          value={detailProject.workspaceTeacher}
           readOnly={true}
         />
 
@@ -164,9 +94,9 @@ export function ProjectDialog(props) {
           label="Chuyên ngành"
           name="majors"
           readOnly={false}
-          value={project.majors}
+          value={detailProject.majors}
           handle={(name, value) => {
-            handleChangeSelect(name, value);
+            handleChange(name, value);
           }}
           listValueSelect={listMajors}
         />
@@ -174,21 +104,20 @@ export function ProjectDialog(props) {
         <TextFieldCustom
           label="Nội dung đề tài"
           name="projectContent"
-          value={project.projectContent}
+          value={detailProject.projectContent}
           readOnly={false}
           handle={(name, value) => {
-            handleChangeInput(name, value);
+            handleChange(name, value);
           }}
           rowsMax={4}
         />
-
         <TextFieldCustom
           label="Yêu cầu đề tài đề tài"
           name="projectRequest"
-          value={project.projectRequest}
+          value={detailProject.projectRequest}
           readOnly={false}
           handle={(name, value) => {
-            handleChangeInput(name, value);
+            handleChange(name, value);
           }}
           rowsMax={4}
         />

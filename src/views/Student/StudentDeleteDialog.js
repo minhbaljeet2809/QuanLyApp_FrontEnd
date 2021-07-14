@@ -11,6 +11,9 @@ export function StudentDialogDelete(props) {
     if (actionDelete.status === 200) {
       alert("Xoá thành công");
     }
+    if (actionDelete.status === 202) {
+      alert(`${actionDelete.data.message}`);
+    }
     onClose();
   };
   return (
